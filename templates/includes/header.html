@@ -1,30 +1,29 @@
 {% load static %}
-<nav class="navbar navbar-light" style="background-color: lightskyblue">
+<nav class="navbar navbar-light" style="background-color: white">
   <div class="container">
     <a class="navbar-brand" href="{% url 'todo:index' %}">
-      <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
-      <span style="color:red">School</span>CRM
+      <img src="{% static 'img/logo.png' %}" height="40" class="d-inline-block align-top" alt="">
     </a>
     <ul class="nav nav-pills">
     {% if request.user.is_authenticated %}
         {% comment %}
         Добавлю позже
         <li class="nav-item">
-            <a class="nav-link link-light" href="<!--  -->">Изменить пароль</a>
+            <a class="nav-link dark-light" href="<!--  -->">Изменить пароль</a>
         </li>
         {% endcomment %}
         <li class="nav-item">
-            <a class="nav-link link-light" href="{% url 'users:logout' %}">Выйти</a>
+            <a class="nav-link link-dark" href="{% url 'users:logout' %}">Выйти</a>
         </li>
         <li>
           Пользователь: {{ user.username }}
         </li>
     {% else %}
         <li class="nav-item">
-          <a class="nav-link link-light {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:login' %}">Войти</a>
+          <a class="nav-link dark-light {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:login' %}">Войти</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link link-light {% if view_name  == 'users:signup' %}active{% endif %}" href="{% url 'users:signup' %}">Регистрация</a>
+          <a class="nav-link link-dark {% if view_name  == 'users:signup' %}active{% endif %}" href="{% url 'users:signup' %}">Регистрация</a>
         </li>
     {% endif %}
     </ul>
