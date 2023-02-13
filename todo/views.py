@@ -3,7 +3,8 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse('Главная страница')
+    template = 'todo/index.html'
+    return render(request, template)
 
 
 def project_list(request):
