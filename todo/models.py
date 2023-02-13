@@ -19,6 +19,13 @@ class Task(models.Model):
     start_time = models.DateTimeField(auto_now=True)
     deadline = models.DateTimeField()
     finish_time = models.DateTimeField
-    author = models.ForeignKey(User, models.CASCADE)
-    executors = models.ManyToManyField(User)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="tasks_as_author",
+    )
+    executors = models.ManyToManyField(
+        User,
+        related_name="tasks_as_executor",
+    )
     is_done = models.BooleanField(default=False)
