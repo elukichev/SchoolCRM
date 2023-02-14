@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}
+  Проекты {{ request.user.name }}
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    {% for project in projects_list %}
+      <article>
+        <ul>
+          <li>
+            Автор: {{ project.author.get_full_name }}
+          </li>
+          <li>
+            Дата публикации: {{ project.start_time|date:"d E Y" }}
+          </li>
+        </ul>
+        <p>{{ project.description }}</p>
+      </article>
+      {% if not forloop.last %}
+        <hr>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endblock %}

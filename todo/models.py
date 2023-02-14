@@ -13,6 +13,15 @@ class Project(models.Model):
     finish_time = models.DateTimeField
     is_done = models.BooleanField(default=False)
     users = models.ManyToManyField(User)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="project_as_author",
+    )
+    executors = models.ManyToManyField(
+        User,
+        related_name="project_as_executor",
+    )
 
 
 class Task(models.Model):
