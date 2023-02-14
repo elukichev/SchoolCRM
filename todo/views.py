@@ -2,13 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
-from todo.forms import ProjectForm
-from todo.models import Project
+from todo.forms import ProjectForm, TaskForm
+from todo.models import Project, Task
 
 
 def index(request):
     template = 'todo/index.html'
-    return render(request, template)
+    # return render(request, template
+    return redirect('/projects')
 
 @login_required()
 def project_list(request):
@@ -20,6 +21,33 @@ def project_list(request):
         'projects_list': projects_list,
     }
     return render(request, template, context)
+
+
+@login_required()
+def project_details(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    tasks = Task.objects.filter(project_id=project_id)
+    context = {
+        'project': project,
+        'tasks': tasks,
+    }
+    return render(request, 'todo/project_details.html', context)
+
+
+@login_required()
+def task_create(request, **kwargs):
+    form = TaskForm(request.POST or None)
+    if form.is_valid():
+        task = form.save(commit=False)
+        task.author = request.user
+        task.project_id = Project.objects.get(pk=kwargs['project_id'])
+        task.save()
+        return redirect('todo:index')
+    context = {
+        'form': form,
+        'is_edit': False,
+    }
+    return render(request, 'todo/task_create.html', context)
 
 
 @login_required
@@ -36,7 +64,4 @@ def project_create(request):
     }
     return render(request, 'todo/project_create.html', context)
 
-
-def project_details(request, slug):
-    return HttpResponse(f'Информация о проекте {slug}')
 

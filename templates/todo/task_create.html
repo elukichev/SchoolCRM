@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{% if is_edit %}
+    Редактировать запись
+  {% else %}
+    Добавить запись
+  {% endif %}{% endblock %}
+{% block content %}
+  {% load user_filters %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 p-5">
+        <div class="card">
+          <div class="card-header">
+            {% if is_edit %}
+              Редактировать задание
+            {% else %}
+              Добавить задание
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <form method="post"
+              {% if action_url %} action="{% url action_url %}" {% endif %}
+              enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group row my-3 p-3">
+                <label for="id_text">
+                  Название проекта
+                  <span class="required text-danger" >*</span>
+                </label>
+                {{ form.name|addclass:'form-control' }}
+                <small id="id_text-help" class="form-text text-muted">
+                  Введите название нового проекта
+                </small>
+              </div>
+              <div class="form-group row my-3 p-3">
+                <label for="id_group">
+                  Описание
+                </label>
+                {{ form.description|addclass:'form-control' }}
+                <small id="id_group-help" class="form-text text-muted">
+                  Введите описание проекта
+                </small>
+              </div>
+              <div class="form-group row my-3 p-3">
+                <label for="id_text">
+                  Дата сдачи проекта
+                  <span class="required text-danger" >*</span>
+                </label>
+                {{ form.deadline|addclass:'form-control' }}
+                <small id="id_text-help" class="form-text text-muted">
+                  Введите день окончания проекта
+                </small>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                  {% if is_edit %}
+                    Сохранить
+                  {% else %}
+                    Добавить
+                  {% endif %}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -17,6 +17,8 @@
           </li>
         </ul>
         <p>{{ project.description }}</p>
+          <a href="{% url 'todo:project_details' project.pk %}">подробная информация </a>
+
       </article>
       {% if not forloop.last %}
         <hr>

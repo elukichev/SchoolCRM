@@ -25,10 +25,15 @@ class Project(models.Model):
 
 
 class Task(models.Model):
+    name = models.TextField()
     description = models.TextField()
     start_time = models.DateTimeField(auto_now=True)
     deadline = models.DateTimeField()
     finish_time = models.DateTimeField
+    project_id = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

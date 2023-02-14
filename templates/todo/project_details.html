@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}
+  Проект {{ project.name|truncatechars:30 }}
+{% endblock %}
+
+{% block content %}
+  <article>
+      <p> {{ project.description }} </p>
+      <a href="{% url 'todo:task_create' project.pk %}">Создать задание </a>
+    {% for task in tasks %}
+       <p> {{ task.name }} </p>
+    {% endfor %}
+  </article>
+{% endblock %}
