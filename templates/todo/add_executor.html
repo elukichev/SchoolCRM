@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Добавить испонителя{% endblock %}
+{% block content %}
+  {% load user_filters %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 p-5">
+        <div class="card">
+          <div class="card-header">
+            Добавить испонителя в проект: {{ project_name }}
+          </div>
+          <div class="card-body">
+            <form method="post"
+              {% if action_url %} action="{% url action_url %}" {% endif %}
+              enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group row my-3 p-3">
+                  {% if attantion %}
+                      <div class="alert alert-danger" role="alert">
+                      {{ attantion }}
+                      </div>
+                  {% endif %}
+                <label for="id_text">
+                  Введите имя пользователя
+                  <span class="required text-danger" >*</span>
+                </label>
+                {{ form.username|addclass:'form-control' }}
+                <small id="id_text-help" class="form-text text-muted">
+                  Введите название нового проекта
+                </small>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                    Добавить
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

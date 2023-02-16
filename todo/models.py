@@ -25,7 +25,7 @@ class Project(models.Model):
 
 
 class Task(models.Model):
-    name = models.TextField()
+    name = models.CharField(max_length=50)
     description = models.TextField()
     start_time = models.DateTimeField(auto_now=True)
     deadline = models.DateTimeField()

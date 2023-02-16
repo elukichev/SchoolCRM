@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, Form
 
 from django import forms
 from .models import Project, Task
@@ -28,3 +28,10 @@ class TaskForm(ModelForm):
         help_text = {'description': 'Введите описание проекта',
                      'deadline': 'Выберите дату',
                      'name': 'Введите название проекта'}
+
+
+class ProjectExecutorForm(Form):
+    username = forms.CharField(
+        label='Введите имя пользователя',
+        max_length=150
+    )

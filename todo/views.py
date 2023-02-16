@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
-from todo.forms import ProjectForm, TaskForm
-from todo.models import Project, Task
+from todo.forms import ProjectForm, TaskForm, ProjectExecutorForm
+from todo.models import Project, Task, User
 
 
 def index(request):
@@ -15,8 +15,6 @@ def index(request):
 def project_list(request):
     template = 'todo/project_list.html'
     projects_list = Project.objects.filter(author=request.user.pk)
-    print(projects_list)
-    print(request.user.pk)
     context = {
         'projects_list': projects_list,
     }
@@ -27,6 +25,7 @@ def project_list(request):
 def project_details(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     tasks = Task.objects.filter(project_id=project_id)
+    #executors = User.objects.filter()
     context = {
         'project': project,
         'tasks': tasks,
@@ -65,3 +64,20 @@ def project_create(request):
     return render(request, 'todo/project_create.html', context)
 
 
+@login_required
+def add_project_executor(request, project_id):
+    form = ProjectExecutorForm(request.POST or None)
+    project = Project.objects.get(pk=project_id)
+    context = {
+        'form': form,
+        'project_name': project.name,
+        'attantion': '',
+    }
+    if form.is_valid():
+        username = form.cleaned_data['username']
+        if username in list(User.objects.values_list("username", flat=True)):
+            user = User.objects.get(username=username)
+            project.executors.add(user)
+            return redirect('todo:index')
+        context['attantion'] = 'Такого пользователя нет'
+    return render(request, 'todo/add_executor.html', context)

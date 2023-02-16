@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  Проекты {{ request.user.name }}
+  Ваши проекты
 {% endblock %}
 
 {% block content %}
-  <div class="container py-5">
-    {% for project in projects_list %}
-      <article>
+      <div class="container">
+      <div class="row row-cols-3">
+          {% for project in projects_list %}
+          <div class="col">
         <ul>
           <li>
             Автор: {{ project.author.get_full_name }}
@@ -18,11 +19,8 @@
         </ul>
         <p>{{ project.description }}</p>
           <a href="{% url 'todo:project_details' project.pk %}">подробная информация </a>
-
-      </article>
-      {% if not forloop.last %}
-        <hr>
-      {% endif %}
-    {% endfor %}
-  </div>
+          </div>
+          {% endfor %}
+          </div>
+      </div>
 {% endblock %}
