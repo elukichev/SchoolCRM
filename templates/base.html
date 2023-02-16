@@ -19,14 +19,14 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <title>{% block title %} {% endblock %}</title>
   </head>
-  <body>
+  <body class="container-fluid mx-3 d-flex flex-column min-vh-100">
     <header>
       {% include 'includes/header.html' %}
     </header>
     <main>
       {% block content %} {% endblock %}
     </main>
-    <footer class="border-top text-center py-3">
+    <footer class="mt-auto text-center py-3">
       {% include 'includes/footer.html' %}
     </footer>
   </body>

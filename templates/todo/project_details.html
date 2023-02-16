@@ -5,11 +5,33 @@
 {% endblock %}
 
 {% block content %}
-  <article>
-      <p> {{ project.description }} </p>
-      <a href="{% url 'todo:task_create' project.pk %}">Создать задание </a>
-    {% for task in tasks %}
-       <p> {{ task.name }} </p>
-    {% endfor %}
-  </article>
+    <h1>{{ project.name }}</h1>
+    <p> {{ project.description }} </p>
+    <div class="row g-0 text-center">
+        <div class="col-sm-6 col-md-8">
+            {% for task in tasks %}
+            <div class="card m-3 border-dark">
+                <div class="card-body">
+                    {{ task.name }}
+                    <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: {{ 60 }}%">Выполнено 3 задачи из 5</div></div>
+                    Дедлайн: {{ task.deadline|date:"d M, Y" }}
+                </div>
+            </div>
+            {% endfor %}
+        <a href="{% url 'todo:task_create' project.pk %}"><button type="button" class="btn btn-outline-dark">Добавить задачу</button></a>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card m-3 border-dark">
+                <div class="card-body">
+            <h4>Над проектом работают: </h4>
+            {% for executor in executors %}
+                <p> {{ executor.get_full_name }} </p>
+            {% endfor %}
+                    <a href="{% url 'todo:add_project_executor' project_id=project.pk %}"><button type="button" class="btn btn-outline-dark">Добавить исполнителя</button></a>
+        </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

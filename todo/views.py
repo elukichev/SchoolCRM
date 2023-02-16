@@ -25,10 +25,12 @@ def project_list(request):
 def project_details(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     tasks = Task.objects.filter(project_id=project_id)
-    #executors = User.objects.filter()
+    executors = list(project.executors.all())
+    print(executors)
     context = {
         'project': project,
         'tasks': tasks,
+        'executors': executors,
     }
     return render(request, 'todo/project_details.html', context)
 
