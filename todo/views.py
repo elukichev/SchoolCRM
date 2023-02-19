@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
-from todo.forms import ProjectForm, TaskForm, ProjectExecutorForm
+from todo.forms import ProjectForm, TaskForm, ProjectExecutorForm, SubTaskForm
 from todo.models import Project, Task, User
 
 
@@ -26,7 +26,6 @@ def project_details(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     tasks = Task.objects.filter(project_id=project_id)
     executors = list(project.executors.all())
-    print(executors)
     context = {
         'project': project,
         'tasks': tasks,
@@ -37,13 +36,22 @@ def project_details(request, project_id):
 
 @login_required()
 def task_create(request, **kwargs):
-    form = TaskForm(request.POST or None)
-    if form.is_valid():
-        task = form.save(commit=False)
+    executors = Project.objects.get(pk=kwargs['project_id']).executors.all()
+    form_cont = tuple((user.pk, user.get_full_name()) for user in executors)
+    form = TaskForm(request.POST or None, form_cont)
+    if request.method == 'POST':
+        task = Task()
+        task.name = form.data['name']
+        task.description = form.data['description']
         task.author = request.user
+        task.executor = User.objects.get(pk=form.data['executor'])
+        d_d = form.data['deadline_day']
+        d_m = form.data['deadline_month']
+        d_y = form.data['deadline_year']
+        task.deadline = f'{d_y}-{d_m}-{d_d}'
         task.project_id = Project.objects.get(pk=kwargs['project_id'])
+        print(task.deadline)
         task.save()
-        return redirect('todo:index')
     context = {
         'form': form,
         'is_edit': False,
@@ -83,3 +91,23 @@ def add_project_executor(request, project_id):
             return redirect('todo:index')
         context['attantion'] = 'Такого пользователя нет'
     return render(request, 'todo/add_executor.html', context)
+
+
+def task_details(request):
+    return None
+
+
+def subtask_create(request, **kwargs):
+    form = SubTaskForm(request.POST or None, kwargs['project_id'])
+    if form.is_valid():
+        subtask = form.save(commit=False)
+        subtask.author = request.user
+        subtask.project_id = Project.objects.get(pk=kwargs['project_id'])
+        subtask.task_id = Task.objects.get(pk=kwargs['task_id'])
+        subtask.save()
+        return redirect('todo:index')
+    context = {
+        'form': form,
+        'is_edit': False,
+    }
+    return render(request, 'todo/subtask_create.html', context)

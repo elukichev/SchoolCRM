@@ -39,8 +39,33 @@ class Task(models.Model):
         on_delete=models.CASCADE,
         related_name="tasks_as_author",
     )
-    executors = models.ManyToManyField(
+    executor = models.ForeignKey(
         User,
-        related_name="tasks_as_executor",
+        on_delete=models.CASCADE,
+        related_name="subtask_as_executor",
+    )
+    is_done = models.BooleanField(default=False)
+
+
+class SubTask(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField()
+    start_time = models.DateTimeField(auto_now=True)
+    deadline = models.DateTimeField()
+    finish_time = models.DateTimeField
+    project_id = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="project_of_subtask",
+    )
+    task_id = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        related_name="task_of_subtask",
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="subtasks_as_author",
     )
     is_done = models.BooleanField(default=False)

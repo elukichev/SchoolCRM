@@ -24,7 +24,7 @@
               {% csrf_token %}
               <div class="form-group row my-2 p-2">
                 <label for="id_text">
-                  Название задачи
+                  Название сабтаска
                   <span class="required text-danger" >*</span>
                 </label>
                 {{ form.name|addclass:'form-control' }}
@@ -35,13 +35,12 @@
                 </label>
                 {{ form.description|addclass:'form-control' }}
                 <small id="id_group-help" class="form-text text-muted">
-                  Введите описание задачи
+                  Введите описание сабтаска
                 </small>
               </div>
-              <div class="form-group row my-3 p-3">
-                <label for="id_text">
+                <div class="form-group row my-3 p-3">
+                <label for="id_group">
                   Выберите исполнителя
-                  <span class="required text-danger" >*</span>
                 </label>
                 {{ form.executor|addclass:'form-control' }}
               </div>

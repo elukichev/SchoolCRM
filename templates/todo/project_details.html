@@ -12,7 +12,7 @@
             {% for task in tasks %}
             <div class="card m-3 border-dark">
                 <div class="card-body">
-                    {{ task.name }}
+                    {{ task.name }} {{ task.author.get_full_name }}
                     <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-bar" style="width: {{ 60 }}%">Выполнено 3 задачи из 5</div></div>
                     Дедлайн: {{ task.deadline|date:"d M, Y" }}
@@ -21,9 +21,12 @@
             {% endfor %}
         <a href="{% url 'todo:task_create' project.pk %}"><button type="button" class="btn btn-outline-dark">Добавить задачу</button></a>
         </div>
-        <div class="col-6 col-md-4">
+        <div class="col-sm-6 col-md-4">
             <div class="card m-3 border-dark">
                 <div class="card-body">
+                <h4>Проект курирует: </h4>
+                {{ project.author.get_full_name }}
+                <hr>
             <h4>Над проектом работают: </h4>
             {% for executor in executors %}
                 <p> {{ executor.get_full_name }} </p>
