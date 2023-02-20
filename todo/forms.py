@@ -60,23 +60,12 @@ class TaskForm(Form):
 
 
 class SubTaskForm(ModelForm):
-    executor = forms.ModelMultipleChoiceField(queryset=None)
-    def __init__(self, *project_id):
-        super(SubTaskForm, self).__init__()
-        self.project_id = project_id[1]
-        self.project = get_object_or_404(Project, pk=self.project_id)
-        self.fields['executor'] = list(self.project.executors.all())
-
-
-    deadline = forms.DateField(widget=forms.SelectDateWidget())
     class Meta:
         model = SubTask
-        fields = ('name', 'description', 'deadline', 'executor')
+        fields = ('name', 'description')
         labels = {'description': 'Описание проекта',
-                  'deadline': 'Время сдачи проекта',
                   'name': 'Название проекта'}
         help_text = {'description': 'Введите описание проекта',
-                     'deadline': 'Выберите дату',
                      'name': 'Введите название проекта'}
 
 

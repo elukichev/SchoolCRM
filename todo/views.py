@@ -50,7 +50,6 @@ def task_create(request, **kwargs):
         d_y = form.data['deadline_year']
         task.deadline = f'{d_y}-{d_m}-{d_d}'
         task.project_id = Project.objects.get(pk=kwargs['project_id'])
-        print(task.deadline)
         task.save()
     context = {
         'form': form,
@@ -93,12 +92,16 @@ def add_project_executor(request, project_id):
     return render(request, 'todo/add_executor.html', context)
 
 
-def task_details(request):
-    return None
+def task_details(request, project_id, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    context = {
+        'task': task,
+    }
+    return render(request, 'todo/task_details.html', context)
 
 
 def subtask_create(request, **kwargs):
-    form = SubTaskForm(request.POST or None, kwargs['project_id'])
+    form = SubTaskForm(request.POST or None)
     if form.is_valid():
         subtask = form.save(commit=False)
         subtask.author = request.user

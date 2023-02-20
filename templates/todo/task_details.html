@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Задание {{ task.name|truncatechars:30 }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ task.name }}</h1>
+    <p> {{ task.description }} </p>
+    <a href="{% url 'todo:subtask_create' task.project_id.pk task.pk %}"> Добавить задание </a>
+    <div class="row g-0 text-center">
+        <div class="col-sm-6 col-md-8">
+        <div class="col-sm-6 col-md-4">
+            <div class="card m-3 border-dark">
+                <div class="card-body">
+                <h4>Проект курирует: </h4>
+                {{ task.executor.get_full_name }}
+                <hr>
+            <h4>Над проектом работают: </h4>
+
+
+        </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+{% endblock %}

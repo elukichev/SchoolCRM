@@ -50,9 +50,9 @@ class Task(models.Model):
 class SubTask(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
-    start_time = models.DateTimeField(auto_now=True)
-    deadline = models.DateTimeField()
-    finish_time = models.DateTimeField
+    # start_time = models.DateTimeField(auto_now=True)
+    # deadline = models.DateTimeField()
+    # finish_time = models.DateTimeField
     project_id = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
