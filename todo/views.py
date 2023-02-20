@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
 from todo.forms import ProjectForm, TaskForm, ProjectExecutorForm, SubTaskForm
-from todo.models import Project, Task, User
+from todo.models import Project, Task, User, SubTask
 
 
 def index(request):
@@ -94,8 +95,10 @@ def add_project_executor(request, project_id):
 
 def task_details(request, project_id, task_id):
     task = get_object_or_404(Task, pk=task_id)
+    subtasks = SubTask.objects.filter(task_id=task_id)
     context = {
         'task': task,
+        'subtasks': subtasks,
     }
     return render(request, 'todo/task_details.html', context)
 
@@ -108,9 +111,21 @@ def subtask_create(request, **kwargs):
         subtask.project_id = Project.objects.get(pk=kwargs['project_id'])
         subtask.task_id = Task.objects.get(pk=kwargs['task_id'])
         subtask.save()
-        return redirect('todo:index')
+        return redirect('todo:task_details', project_id=kwargs['project_id'], task_id=kwargs['task_id'])
     context = {
         'form': form,
         'is_edit': False,
     }
     return render(request, 'todo/subtask_create.html', context)
+
+
+def subtask_done(request, project_id, task_id, subtask_id):
+    print(request, project_id, task_id, subtask_id)
+    SubTask.objects.filter(pk=subtask_id).update(is_done=(F('is_done') + 1) % 2)
+    return redirect('todo:task_details', project_id=project_id, task_id=task_id)
+
+
+def subtask_delete(request, project_id, task_id, subtask_id):
+    print(request, project_id, task_id, subtask_id)
+    SubTask.objects.filter(pk=subtask_id).delete()
+    return redirect('todo:task_details', project_id=project_id, task_id=task_id)

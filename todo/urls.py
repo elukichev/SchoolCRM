@@ -12,4 +12,15 @@ urlpatterns = [
     path('projects/<int:project_id>/add-executor', views.add_project_executor, name='add_project_executor'),
     path('projects/<int:project_id>/task/<int:task_id>', views.task_details, name='task_details'),
     path('projects/<int:project_id>/task/<int:task_id>/subtusk-create', views.subtask_create, name='subtask_create'),
+    path(
+        'projects/<int:project_id>/task/<int:task_id>/done/<int:subtask_id>',
+         views.subtask_done,
+        name='subtask_done'
+    ),
+    path(
+        'projects/<int:project_id>/task/<int:task_id>/delete/<int:subtask_id>',
+         views.subtask_delete,
+        name='subtask_delete'
+    ),
+
 ]

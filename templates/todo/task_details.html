@@ -7,9 +7,24 @@
 {% block content %}
     <h1>{{ task.name }}</h1>
     <p> {{ task.description }} </p>
-    <a href="{% url 'todo:subtask_create' task.project_id.pk task.pk %}"> Добавить задание </a>
     <div class="row g-0 text-center">
-        <div class="col-sm-6 col-md-8">
+    <div class="col-sm-6 col-md-8">
+            {% for subtask in subtasks %}
+            <div class="card m-3 border-dark">
+                <div class="card-body">
+                    {{ subtask.name }}
+                    {{ subtask.description }}
+                    {% if not subtask.is_done %}
+                        <a href="{% url 'todo:subtask_done' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/notdone.png" class="checkbox-img"></a>
+                    {% else %}
+                        <a href="{% url 'todo:subtask_done' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/done.png" class="checkbox-img"></a>
+                    {% endif %}
+                    <a href="{% url 'todo:subtask_delete' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/delete.png" class="delete-img"></a>
+                </div>
+            </div>
+            {% endfor %}
+        <a href="{% url 'todo:subtask_create' task.project_id.pk task.pk %}"><button type="button" class="btn btn-outline-dark">Добавить сабтаск</button></a>
+        </div>
         <div class="col-sm-6 col-md-4">
             <div class="card m-3 border-dark">
                 <div class="card-body">
@@ -21,7 +36,6 @@
 
         </div>
             </div>
-        </div>
         </div>
     </div>
 
