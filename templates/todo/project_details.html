@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <a href="{% url 'todo:task_details' project.pk task.pk %}"> {{ task.name }} </a> Ответственный: {{ task.executor.get_full_name }}
                     <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar" style="width: {{ 60 }}%">Выполнено 3 задачи из 5</div></div>
+                    <div class="progress-bar" style="width: {{ progress|get_item:task.pk|get_item:'percent' }}%">Выполнено {{ progress|get_item:task.pk|get_item:'done' }} задачи из {{ progress|get_item:task.pk|get_item:'total' }}</div></div>
                     Дедлайн: {{ task.deadline|date:"d M, Y" }}
                 </div>
             </div>
