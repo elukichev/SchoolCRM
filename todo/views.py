@@ -50,8 +50,8 @@ def project_details(request, project_id):
 
 
 @login_required()
-def task_create(request, **kwargs):
-    project = Project.objects.get(pk=kwargs['project_id'])
+def task_create(request, project_id):
+    project = Project.objects.get(pk=project_id)
     if request.user != project.author or request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     executors = project.executors.all()
@@ -67,11 +67,47 @@ def task_create(request, **kwargs):
         d_m = form.data['deadline_month']
         d_y = form.data['deadline_year']
         task.deadline = f'{d_y}-{d_m}-{d_d}'
-        task.project_id = Project.objects.get(pk=kwargs['project_id'])
+        task.project_id = Project.objects.get(pk=project_id)
         task.save()
+        return redirect('todo:project_details', project_id)
     context = {
         'form': form,
         'is_edit': False,
+    }
+    return render(request, 'todo/task_create.html', context)
+
+
+@login_required
+def task_edit(request, project_id, task_id):
+    project = Project.objects.get(pk=project_id)
+    if request.user != project.author or request.user not in project.executors.all():
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+
+    task_old = get_object_or_404(Task, pk=task_id)
+    executors = project.executors.all()
+    form_cont = tuple((user.pk, user.get_full_name()) for user in executors)
+    form = TaskForm(request.POST or None, form_cont,
+                    initial={
+                        'name':1245
+                    })
+    form.fields['name'].initial = '77777'
+    print(form)
+
+    if form.is_valid():
+        task_old = get_object_or_404(Task, pk=task_id)
+        task_new = form.save(commit=False)
+        task_old.name = task_new.name
+        task_old.description = task_new.description
+        task_old.deadline = task_new.deadline
+        task_old.is_done = task_new.is_done
+        task_old.executor = task_new.executor
+        task_old.save()
+        return redirect('todo:project_details', project_id)
+    task = get_object_or_404(Task, pk=task_id)
+    context = {
+        'task': task,
+        'form': form,
+        'is_edit': True,
     }
     return render(request, 'todo/task_create.html', context)
 
@@ -102,10 +138,10 @@ def project_edit(request, project_id):
                        instance=project_old)
     if form.is_valid():
         project_old = get_object_or_404(Project, pk=project_id)
-        post_new = form.save(commit=False)
-        project_old.name = post_new.name
-        project_old.description = post_new.description
-        project_old.deadline = post_new.deadline
+        project_new = form.save(commit=False)
+        project_old.name = project_new.name
+        project_old.description = project_new.description
+        project_old.deadline = project_new.deadline
         project_old.save()
         return redirect('todo:project_details', project_id)
     project = get_object_or_404(Project, pk=project_id)
