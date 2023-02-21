@@ -92,6 +92,32 @@ def project_create(request):
 
 
 @login_required
+def project_edit(request, project_id):
+    project = Project.objects.get(pk=project_id)
+    if request.user != project.author or request.user not in project.executors.all():
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+    project_old = get_object_or_404(Project, pk=project_id)
+    form = ProjectForm(request.POST or None,
+                       files=request.FILES or None,
+                       instance=project_old)
+    if form.is_valid():
+        project_old = get_object_or_404(Project, pk=project_id)
+        post_new = form.save(commit=False)
+        project_old.name = post_new.name
+        project_old.description = post_new.description
+        project_old.deadline = post_new.deadline
+        project_old.save()
+        return redirect('todo:project_details', project_id)
+    project = get_object_or_404(Project, pk=project_id)
+    context = {
+        'project': project,
+        'form': form,
+        'is_edit': True,
+    }
+    return render(request, 'todo/project_create.html', context)
+
+
+@login_required
 def add_project_executor(request, project_id):
     form = ProjectExecutorForm(request.POST or None)
     project = Project.objects.get(pk=project_id)
@@ -158,3 +184,11 @@ def subtask_delete(request, project_id, task_id, subtask_id):
         return HttpResponseNotFound('<h1>Page not found</h1>')
     SubTask.objects.filter(pk=subtask_id).delete()
     return redirect('todo:task_details', project_id=project_id, task_id=task_id)
+
+
+def task_delete(request, project_id, task_id):
+    project = Project.objects.get(pk=project_id)
+    if request.user != project.author or request.user not in project.executors.all():
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+    Task.objects.filter(pk=task_id).delete()
+    return redirect('todo:project_details', project_id=project_id)
