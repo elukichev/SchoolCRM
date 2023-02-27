@@ -5,16 +5,24 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ project.name }}</h1>
-    <p> {{ project.description }} </p>
-    <p> <a href="{% url 'todo:project_edit' project.pk %}">Редактировать проект</a></p>
+    <div class="border border-dark rounded p-2 m-3">
+    <div class="d-flex justify-content-between">
+        <h1>{{ project.name }}</h1>
+        <div class="d-flex justify-content-end"> <a href="{% url 'todo:project_edit' project.pk %}" class="text-decoration-none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+        </svg> Редактировать</a></div></div>
+        <p> {{ project.description }} </p>
+    </div>
     <div class="row g-0 text-center">
         <div class="col-sm-6 col-md-8">
             {% for task in tasks %}
             <div class="card m-3 border-dark">
                 <div class="card-body">
+                    <div class="d-flex justify-content-between p-2">
                     <a href="{% url 'todo:task_details' project.pk task.pk %}"> {{ task.name }} </a> Ответственный: {{ task.executor.get_full_name }}
-                    <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                    <div class="progress m-2" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-bar" style="width: {{ progress|get_item:task.pk|get_item:'percent' }}%">Выполнено {{ progress|get_item:task.pk|get_item:'done' }} задачи из {{ progress|get_item:task.pk|get_item:'total' }}</div></div>
                     Дедлайн: {{ task.deadline|date:"d M, Y" }}
                     <a href="{% url 'todo:task_delete' task.project_id.pk task.pk %}"><img src="/static/img/delete.png" class="delete-img"></a>

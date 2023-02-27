@@ -8,16 +8,18 @@ from todo.models import Project, Task, User, SubTask
 
 
 def index(request):
-    template = 'todo/index.html'
-    # return render(request, template
     return redirect('/projects')
 
 @login_required()
 def project_list(request):
     template = 'todo/project_list.html'
-    projects_list = Project.objects.filter(author=request.user.pk)
+    author_projects_list = Project.objects.filter(author=request.user.pk)
+    executor_projects_list = Project.objects.filter(executors=request.user.pk)
+    count_of_project = len(executor_projects_list) + len(author_projects_list)
     context = {
-        'projects_list': projects_list,
+        'author_projects_list': author_projects_list,
+        'executor_projects_list': executor_projects_list,
+        'count_of_project': count_of_project,
     }
     return render(request, template, context)
 
@@ -25,7 +27,7 @@ def project_list(request):
 @login_required()
 def project_details(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if (request.user != project.author) and (request.user not in project.executors.all()):
         return HttpResponseNotFound('<h1>Page not found</h1>')
     tasks = Task.objects.filter(project_id=project_id)
     progress = {}
@@ -52,7 +54,7 @@ def project_details(request, project_id):
 @login_required()
 def task_create(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     executors = project.executors.all()
     form_cont = tuple((user.pk, user.get_full_name()) for user in executors)
@@ -80,7 +82,7 @@ def task_create(request, project_id):
 @login_required
 def task_edit(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
     task_old = get_object_or_404(Task, pk=task_id)
@@ -91,6 +93,7 @@ def task_edit(request, project_id, task_id):
                         'name':1245
                     })
     form.fields['name'].initial = '77777'
+    form.name = '2342'
     print(form)
 
     if form.is_valid():
@@ -130,7 +133,7 @@ def project_create(request):
 @login_required
 def project_edit(request, project_id):
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     project_old = get_object_or_404(Project, pk=project_id)
     form = ProjectForm(request.POST or None,
@@ -157,7 +160,7 @@ def project_edit(request, project_id):
 def add_project_executor(request, project_id):
     form = ProjectExecutorForm(request.POST or None)
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     context = {
         'form': form,
@@ -176,20 +179,22 @@ def add_project_executor(request, project_id):
 
 def task_details(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     task = get_object_or_404(Task, pk=task_id)
     subtasks = SubTask.objects.filter(task_id=task_id)
+    executors = list(project.executors.all())
     context = {
         'task': task,
         'subtasks': subtasks,
+        'executors': executors,
     }
     return render(request, 'todo/task_details.html', context)
 
 
 def subtask_create(request, **kwargs):
     project = Project.objects.get(pk=kwargs['project_id'])
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     form = SubTaskForm(request.POST or None)
     if form.is_valid():
@@ -208,7 +213,7 @@ def subtask_create(request, **kwargs):
 
 def subtask_done(request, project_id, task_id, subtask_id):
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     SubTask.objects.filter(pk=subtask_id).update(is_done=(F('is_done') + 1) % 2)
     return redirect('todo:task_details', project_id=project_id, task_id=task_id)
@@ -216,7 +221,7 @@ def subtask_done(request, project_id, task_id, subtask_id):
 
 def subtask_delete(request, project_id, task_id, subtask_id):
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     SubTask.objects.filter(pk=subtask_id).delete()
     return redirect('todo:task_details', project_id=project_id, task_id=task_id)
@@ -224,7 +229,7 @@ def subtask_delete(request, project_id, task_id, subtask_id):
 
 def task_delete(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
-    if request.user != project.author or request.user not in project.executors.all():
+    if request.user != project.author and request.user not in project.executors.all():
         return HttpResponseNotFound('<h1>Page not found</h1>')
     Task.objects.filter(pk=task_id).delete()
     return redirect('todo:project_details', project_id=project_id)

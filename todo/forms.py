@@ -29,6 +29,8 @@ class TaskForm(Form):
         label='Введите название задачи',
         max_length=150,
         required=True,
+        widget=forms.TextInput(
+            attrs={'class': "form-control"})
     )
     description = forms.CharField(
         label='Введите описание задачи',

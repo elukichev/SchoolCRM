@@ -5,34 +5,56 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ task.name }}</h1>
-    <p> {{ task.description }} </p>
+
+    <div class="border border-dark rounded p-2 m-3">
+    <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item h4"><a href="{% url 'todo:project_details' task.project_id.pk %}">{{ task.project_id.name }}</a></li>
+    <li class="breadcrumb-item active h4" aria-current="page">{{ task.name }}</li>
+  </ol>
+</nav>
+        <p> {{ task.description }} </p>
+    </div>
+
+
     <div class="row g-0 text-center">
     <div class="col-sm-6 col-md-8">
             {% for subtask in subtasks %}
+                {% if not subtask.is_done %}
             <div class="card m-3 border-dark">
-                <div class="card-body">
+                <div class="card-body not-done">
+                    <a href="{% url 'todo:subtask_done' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/notdone.png" class="checkbox-img"></a>
                     {{ subtask.name }}
                     {{ subtask.description }}
-                    {% if not subtask.is_done %}
-                        <a href="{% url 'todo:subtask_done' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/notdone.png" class="checkbox-img"></a>
-                    {% else %}
-                        <a href="{% url 'todo:subtask_done' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/done.png" class="checkbox-img"></a>
-                    {% endif %}
                     <a href="{% url 'todo:subtask_delete' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/delete.png" class="delete-img"></a>
                 </div>
             </div>
+                {% endif %}
             {% endfor %}
-        <a href="{% url 'todo:subtask_create' task.project_id.pk task.pk %}"><button type="button" class="btn btn-outline-dark">Добавить сабтаск</button></a>
+            {% for subtask in subtasks %}
+                {% if subtask.is_done %}
+            <div class="card m-3 border-dark">
+                <div class="card-body done">
+                    <a href="{% url 'todo:subtask_done' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/done.png" class="checkbox-img"></a>
+                    {{ subtask.name }}
+                    {{ subtask.description }}
+                    <a href="{% url 'todo:subtask_delete' task.project_id.pk task.pk subtask.pk %}"><img src="/static/img/delete.png" class="delete-img"></a>
+                </div>
+            </div>
+                {% endif %}
+            {% endfor %}
+        <a href="{% url 'todo:subtask_create' task.project_id.pk task.pk %}"><button type="button" class="btn btn-outline-dark">Добавить подзадачу</button></a>
         </div>
         <div class="col-sm-6 col-md-4">
             <div class="card m-3 border-dark">
                 <div class="card-body">
-                <h4>Проект курирует: </h4>
-                {{ task.executor.get_full_name }}
+                <h4>Автор задачи: </h4>
+                {{ task.author.get_full_name }}
                 <hr>
-            <h4>Над проектом работают: </h4>
-
+            <h4>Над проектом работают:</h4>
+                {% for executor in executors %}
+                <p> {{ executor.get_full_name }} </p>
+            {% endfor %}
 
         </div>
             </div>
