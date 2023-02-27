@@ -1,0 +1,29 @@
+.done{
+    color: #999;
+    text-decoration: line-through;
+    font-size: 2em;
+}
+
+.not-done{
+    font-size: 2em;
+}
+
+.checkbox-img{
+    width: 2em;
+}
+
+.delete-img{
+    width: 1em;
+    float: right;
+}
+
+.delete-img:hover {
+    transition: all 0.6s ease 0s;
+    filter: drop-shadow(0px 2px 5px red);
+}
+
+.checkbox-img:hover {
+    transition: all 0.6s ease 0s;
+    filter: drop-shadow(1px 2px 3px green);
+}
+
